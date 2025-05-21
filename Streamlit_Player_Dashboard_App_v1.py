@@ -30,14 +30,18 @@ import gdown
 
 root = os.getcwd() + '/'
 
+url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leagues.csv?rlkey=jhci52hjq0lw8xjnyhydng3uj&st=ujr89d43&raw=1'
 
+df = pd.read_csv(url)
+
+#st.write(df.head())
 
 #https://drive.google.com/uc?id=1AZhc9HS0IBH0FMC7NArwRP3eu6n14Bv2&export=download
 
 #df = pd.read_csv(download_url)
 
 #read csv file
-df = pd.read_csv("/Users/scini/Documents - Local/Final FBRef All Leagues.csv")
+#df = pd.read_csv("/Users/scini/Documents - Local/Final FBRef All Leagues.csv")
 
 #drop unneeded fields and rename position field imported from external csv file
 df = df.drop(['UrlFBref', 'UrlTmarkt'], axis=1)
