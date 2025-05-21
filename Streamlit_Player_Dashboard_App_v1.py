@@ -26,7 +26,6 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 import matplotlib.cm as cm
 import matplotlib
-import gdown
 
 root = os.getcwd() + '/'
 
