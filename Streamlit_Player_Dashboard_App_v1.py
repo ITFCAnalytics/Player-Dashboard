@@ -26,11 +26,18 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 import matplotlib.cm as cm
 import matplotlib
+import gdown
 
 root = os.getcwd() + '/'
 
+
+
+#https://drive.google.com/uc?id=1AZhc9HS0IBH0FMC7NArwRP3eu6n14Bv2&export=download
+
+#df = pd.read_csv(download_url)
+
 #read csv file
-df = pd.read_csv(f"{root}Final FBRef All Leagues.csv")
+df = pd.read_csv("/Users/scini/Documents - Local/Final FBRef All Leagues.csv")
 
 #drop unneeded fields and rename position field imported from external csv file
 df = df.drop(['UrlFBref', 'UrlTmarkt'], axis=1)
