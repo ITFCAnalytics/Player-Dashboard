@@ -29,7 +29,7 @@ import matplotlib
 
 root = os.getcwd() + '/'
 
-url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leagues.csv?rlkey=jhci52hjq0lw8xjnyhydng3uj&st=ujr89d43&raw=1'
+url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leagues.csv?rlkey=jhci52hjq0lw8xjnyhydng3uj&raw=1'
 
 df = pd.read_csv(url)
 
