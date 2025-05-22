@@ -35,8 +35,6 @@ url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leag
 
 df = pd.read_csv(url, delimiter=",")
 
-#st.write(df.head())
-
 #https://drive.google.com/uc?id=1AZhc9HS0IBH0FMC7NArwRP3eu6n14Bv2&export=download
 
 #df = pd.read_csv(download_url)
