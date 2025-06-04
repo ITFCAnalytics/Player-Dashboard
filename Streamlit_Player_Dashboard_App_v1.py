@@ -148,6 +148,19 @@ df['LineBreakingPass%'] = (df['LineBreakingPassesPer90'] / df['PassesAttemptedPe
 df['LooseBallWinsPer90'] = (df['RecovPer90'] - (df['TklWinPossPer90'] + df['IntPer90'] + (df['PassBlocksPer90'] * 0.5)))
 df['LooseBallWinsPer90'] = np.where(df['LooseBallWinsPer90'] == 0, 0.1, df['LooseBallWinsPer90'])
 
+df['DuelTackleWinsPer90'] = df['TklWinPoss'] - df['DrbTkl']
+df['DuelTackleWinsPer90'] = np.where(df['DuelTackleWinsPer90'] == 0, 0.1, df['DuelTackleWinsPer90'])
+
+df['Miscontrols'] = df['CarryMistakes']
+df['Miscontrols'] = np.where(df['Miscontrols'] == 0, 0.1, df['Miscontrols'])
+
+df['MiscontrolsPer90'] = df['CarryMistakesPer90']
+df['MiscontrolsPer90'] = np.where(df['MiscontrolsPer90'] == 0, 0.1, df['MiscontrolsPer90'])
+
+df['Miscontrol%'] = (df['MiscontrolsPer90'] / df['ReceivedPassPer90']) * 100
+df['Miscontrol%'] = np.where(df['Miscontrol%'] == 0, 0.1, df['Miscontrol%'])
+
+
 df_combined = df.copy()
 
 def create_percentile_rankings(position, additional_player, df):
@@ -171,7 +184,7 @@ def create_percentile_rankings(position, additional_player, df):
     df = df[(df['Position Group'] == position) | (df['Player Name'] == additional_player)]
 
     metrics_to_rank = [
-    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'CarryMistakes', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'CarryMistakesPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90'
+    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'Miscontrols', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'MiscontrolsPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90', 'DuelTackleWinsPer90', 'Miscontrol%'
     ]
 
     for metric in metrics_to_rank:
@@ -183,6 +196,9 @@ def create_percentile_rankings(position, additional_player, df):
         
         # Round to 1 decimal place
         df[percentile_col] = df[percentile_col].round(1)
+
+    df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
+    df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
 
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player Name', 'Squad', 'Season', 'Main Position'], keep='first')
@@ -222,7 +238,7 @@ def create_percentile_rankings_comparison(position, additional_player, additiona
     df = df[(df['Position Group'] == position) | (df['Player Name'] == additional_player) | (df['Player Name'] == additional_player2)]
 
     metrics_to_rank = [
-    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'CarryMistakes', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'CarryMistakesPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90'
+    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'Miscontrols', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'MiscontrolsPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90', 'DuelTackleWinsPer90', 'Miscontrol%'
     ]
 
     for metric in metrics_to_rank:
@@ -235,6 +251,9 @@ def create_percentile_rankings_comparison(position, additional_player, additiona
         # Round to 1 decimal place
         df[percentile_col] = df[percentile_col].round(1)
 
+    df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
+    df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
+
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player Name', 'Squad', 'Season', 'Main Position'], keep='first')
 
@@ -243,7 +262,7 @@ def create_percentile_rankings_comparison(position, additional_player, additiona
 def create_percentile_rankings_filtered(fbref_position, position_template, df):
 
     metrics_to_rank = [
-    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'CarryMistakes', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'CarryMistakesPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90'
+    'Min', 'G+A', 'Glsxx', 'Goals', 'Shots', 'SoT', 'SoT%', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT', 'AvgShotDistance', 'FKShots', 'PK', 'PKsAtt', 'xG', 'npxG', 'npxG/Sh', 'G-xG', 'npG-xG', 'PassesCompleted', 'PassesAttempted', 'TotCmp%', 'TotalPassDist', 'ProgPassDist', 'ShortPassCmp', 'ShortPassAtt', 'ShortPassCmp%', 'MedPassCmp', 'MedPassAtt', 'MedPassCmp%', 'LongPassCmp', 'LongPassAtt', 'LongPassCmp%', 'Assists', 'xAG', 'xA', 'A-xAG', 'KeyPasses', 'Final1/3Cmp', 'PenAreaCmp', 'CrsPenAreaCmp', 'ProgPasses', 'LivePass', 'DeadPass', 'FKPasses', 'ThruBalls', 'Switches', 'Crs', 'ThrowIn', 'CK', 'InSwingCK', 'OutSwingCK', 'StrCK', 'Cmpxxx', 'PassesToOff', 'PassesBlocked', 'SCA', 'SCA90', 'SCAPassLive', 'SCAPassDead', 'SCADrib', 'SCASh', 'SCAFld', 'SCADef', 'GCA', 'GCA90', 'GCAPassLive', 'GCAPassDead', 'GCADrib', 'GCASh', 'GCAFld', 'GCADef', 'Tkl', 'TklWinPoss', 'Def3rdTkl', 'Mid3rdTkl', 'Att3rdTkl', 'DrbTkl', 'DrbPastAtt', 'DrbTkl%', 'DrbPast', 'Blocks', 'ShBlocks', 'PassBlocks', 'Int', 'Tkl+Int', 'Clr', 'Err', 'Touches', 'DefPenTouch', 'Def3rdTouch', 'Mid3rdTouch', 'Att3rdTouch', 'AttPenTouch', 'LiveTouch', 'AttDrb', 'SuccDrb', 'DrbSucc%', 'TimesTackled', 'TimesTackled%', 'Carries', 'TotalCarryDistance', 'ProgCarryDistance', 'ProgCarries', 'CarriesToFinalThird', 'CarriesToPenArea', 'Miscontrols', 'Disposesed', 'ReceivedPass', 'ProgPassesRec', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Fld', 'Off', 'PKwon', 'PKcon', 'OG', 'Recov', 'AerialWins', 'AerialLoss', 'AerialWin%', 'G+APer90', 'GlsxxPer90', 'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'SoT%Per90', 'Sh/90Per90', 'SoT/90Per90', 'G/ShPer90', 'G/SoTPer90', 'AvgShotDistancePer90', 'FKShotsPer90', 'PKPer90', 'PKsAttPer90', 'xGPer90', 'npxGPer90', 'npxG/ShPer90', 'G-xGPer90', 'npG-xGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 'TotCmp%Per90', 'TotalPassDistPer90', 'ProgPassDistPer90', 'ShortPassCmpPer90', 'ShortPassAttPer90', 'ShortPassCmp%Per90', 'MedPassCmpPer90', 'MedPassAttPer90', 'MedPassCmp%Per90', 'LongPassCmpPer90', 'LongPassAttPer90', 'LongPassCmp%Per90', 'AssistsPer90', 'xAGPer90', 'xAPer90', 'A-xAGPer90', 'KeyPassesPer90', 'Final1/3CmpPer90', 'PenAreaCmpPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 'LivePassPer90', 'DeadPassPer90', 'FKPassesPer90', 'ThruBallsPer90', 'SwitchesPer90', 'CrsPer90', 'ThrowInPer90', 'CKPer90', 'InSwingCKPer90', 'OutSwingCKPer90', 'StrCKPer90', 'CmpxxxPer90', 'PassesToOffPer90', 'PassesBlockedPer90', 'SCAPer90', 'SCA90Per90', 'SCAPassLivePer90', 'SCAPassDeadPer90', 'SCADribPer90', 'SCAShPer90', 'SCAFldPer90', 'SCADefPer90', 'GCAPer90', 'GCA90Per90', 'GCAPassLivePer90', 'GCAPassDeadPer90', 'GCADribPer90', 'GCAShPer90', 'GCAFldPer90', 'GCADefPer90', 'TklPer90', 'TklWinPossPer90', 'Def3rdTklPer90', 'Mid3rdTklPer90', 'Att3rdTklPer90', 'DrbTklPer90', 'DrbPastAttPer90', 'DrbTkl%Per90', 'DrbPastPer90', 'BlocksPer90', 'ShBlocksPer90', 'PassBlocksPer90', 'IntPer90', 'Tkl+IntPer90', 'ClrPer90', 'ErrPer90', 'TouchesPer90', 'DefPenTouchPer90', 'Def3rdTouchPer90', 'Mid3rdTouchPer90', 'Att3rdTouchPer90', 'AttPenTouchPer90', 'LiveTouchPer90', 'AttDrbPer90', 'SuccDrbPer90', 'DrbSucc%Per90', 'TimesTackledPer90', 'TimesTackled%Per90', 'CarriesPer90', 'TotalCarryDistancePer90', 'ProgCarryDistancePer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 'CarriesToPenAreaPer90', 'MiscontrolsPer90', 'DisposesedPer90', 'ReceivedPassPer90', 'ProgPassesRecPer90', 'YellowsPer90', 'RedsPer90', 'Yellow2Per90', 'FlsPer90', 'FldPer90', 'OffPer90', 'PKwonPer90', 'PKconPer90', 'OGPer90', 'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'AerialWin%Per90', '90sPer90', 'AvgTeamPoss', 'OppTouches', 'TeamMins', 'TeamTouches90', 'pAdjTkl+IntPer90', 'pAdjClrPer90', 'pAdjShBlocksPer90', 'pAdjPassBlocksPer90', 'pAdjIntPer90', 'pAdjDrbTklPer90', 'pAdjTklWinPossPer90', 'pAdjDrbPastPer90', 'pAdjAerialWinsPer90', 'pAdjAerialLossPer90', 'pAdjDrbPastAttPer90', 'TouchCentrality', 'Tkl+IntPer600OppTouch', 'pAdjTouchesPer90', 'CarriesPer50Touches', 'ProgCarriesPer50Touches', 'ProgPassesPer50CmpPasses', 'ProgDistancePerCarry', 'ProgCarryEfficiency', 'PlayerFBref', 'ShortPass%', 'MediumPass%', 'LongPass%', 'ProgPass%', 'Switch%', 'KeyPass%', 'Final3rdPass%', 'ThroughPass%', 'Def3rdTouch%', 'Mid3rdTouch%', 'Att3rdTouch%', 'AttPenTouch%', 'ActionsPerTouch', 'Def3rdTkl%', 'Mid3rdTkl%', 'Att3rdTkl%', 'LineBreakingPassesPer90', 'LineBreakingPass%', 'LooseBallWinsPer90', 'DuelTackleWinsPer90', 'Miscontrol%'
     ]
 
     df = df[df['Pos'].isin(fbref_position)]
@@ -279,10 +298,13 @@ def create_percentile_rankings_filtered(fbref_position, position_template, df):
         percentile_col = f'{metric}_PR'
         
         # Calculate percentile rank
-        df[percentile_col] = df.groupby(['Position Group', 'Season', 'Extract'])[metric].rank(pct=True) * 100
-        
+        df[percentile_col] = df.groupby(['Position Group'])[metric].rank(pct=True) * 100
+        #, 'Season', 'Extract'
         # Round to 1 decimal place
         df[percentile_col] = df[percentile_col].round(1)
+
+    df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
+    df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
 
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player', 'Squad', 'Season', 'Position Group'], keep='first')
@@ -310,40 +332,45 @@ def create_aggregated_columns(df):
     df['Defensive Intensity'] = (df['Tkl+IntPer90_PR']+df['Tkl+IntPer600OppTouch_PR']+df['TklWinPossPer90_PR']+df['FlsPer90_PR']+df['PassBlocksPer90_PR']+df['LooseBallWinsPer90_PR'])/6
 
     # Traits
-    df['Attempts a lot of dribbles'] = np.where(df['AttDrbPer90_PR'] >= 75, 1, 0)
-    df['Carries the ball frequently'] = np.where(df['ProgCarriesPer50Touches_PR'] >= 75, 1, 0)
-    df['Creates a lot of his own shots'] = np.where(df['SCADribPer90_PR'] >= 75, 1, 0)
-    df['Shoots frequently'] = np.where(df['ShotsPer90_PR'] >= 75, 1, 0)
-    df['Attempts a lot of through balls'] = np.where(df['ThroughPass%_PR'] >= 75, 1, 0)
-    df['Gets fouled frequently'] = np.where(df['FldPer90_PR'] >= 75, 1, 0)
-    df['Switches the ball frequently'] = np.where(df['Switch%_PR'] >= 75, 1, 0)
-    df['Makes a lot of tackles'] = np.where(df['TklPer90_PR'] >= 75, 1, 0)
-    df['Plays a lot of progressive passes'] = np.where(df['ProgPass%_PR'] >= 75, 1, 0)
-    df['Plays a lot of short passes'] = np.where(df['ShortPass%_PR'] >= 75, 1, 0)
-    df['Plays a lot of long passes'] = np.where(df['LongPass%_PR'] >= 75, 1, 0)
-    if df['Position Group'].any() != 'ST':
-        df['Plays a lot of line-breaking passes'] = np.where((df['LineBreakingPass%_PR'] >= 75) & (df['PassesCompletedPer90_PR'] >= 25), 1, 0)
     df['Has a high share of teams total touches'] = np.where(df['TouchCentrality_PR'] >= 75, 1, 0)
     df['Has a high share of touches in defensive 3rd'] = np.where(df['Def3rdTouch%_PR'] >= 75, 1, 0)
     df['Has a high share of touches in middle 3rd'] = np.where(df['Mid3rdTouch%_PR'] >= 75, 1, 0)
     df['Has a high share of touches in final 3rd'] = np.where(df['Att3rdTouch%_PR'] >= 75, 1, 0)
     df['Has a high share of touches in the penalty box'] = np.where(df['AttPenTouch%_PR'] >= 75, 1, 0)
-    df['Competes in a lot of aerial duels'] = np.where(df['AerialWinsPer90_PR'] >= 75, 1, 0)
-    df['Fouls frequently'] = np.where(df['FlsPer90_PR'] >= 75, 1, 0)
+    df['Takes a lot of touches per action'] = np.where(df['ActionsPerTouch_PR'] <= 25, 1, 0)
+    df['Takes few touches per action'] = np.where(df['ActionsPerTouch_PR'] >= 75, 1, 0)
     df['Receives a lot of progressive passes'] = np.where(df['ProgPassesRecPer90_PR'] >= 75, 1, 0)
-    df['Has a high share of carries into dangerous areas'] = np.where(df['ProgCarryEfficiency_PR'] >= 75, 1, 0)
+
+    df['Plays a lot of progressive passes'] = np.where(df['ProgPass%_PR'] >= 75, 1, 0)
+    df['Plays a lot of short passes'] = np.where(df['ShortPass%_PR'] >= 75, 1, 0)
+    df['Plays a lot of long passes'] = np.where(df['LongPass%_PR'] >= 75, 1, 0)
+    if df['Position Group'].any() != 'ST':
+        df['Plays a lot of line-breaking passes'] = np.where((df['LineBreakingPass%_PR'] >= 75) & (df['PassesCompletedPer90_PR'] >= 25), 1, 0)
+    df['Attempts a lot of through balls'] = np.where(df['ThroughPass%_PR'] >= 75, 1, 0)
+    df['Switches the ball frequently'] = np.where(df['Switch%_PR'] >= 75, 1, 0)
     df['Crosses the ball frequently'] = np.where(df['CrsPer90_PR'] >= 75, 1, 0)
-    df['Shoots from poor areas'] = np.where(df['npxG/Sh_PR'] <= 25, 1, 0)
-    df['Shoots from good areas'] = np.where(df['npxG/Sh_PR'] >= 75, 1, 0)
+
+    df['Carries the ball frequently'] = np.where(df['ProgCarriesPer50Touches_PR'] >= 75, 1, 0)
     df['Carries the ball over long distances'] = np.where(df['ProgDistancePerCarry_PR'] >= 75, 1, 0)
+    df['Has a high share of carries into dangerous areas'] = np.where(df['ProgCarryEfficiency_PR'] >= 75, 1, 0)
+    df['Attempts a lot of dribbles'] = np.where(df['AttDrbPer90_PR'] >= 75, 1, 0)
+    df['Gets fouled frequently'] = np.where(df['FldPer90_PR'] >= 75, 1, 0)
+
+    df['Fouls frequently'] = np.where(df['FlsPer90_PR'] >= 75, 1, 0)
+    df['Makes a lot of tackles'] = np.where(df['TklPer90_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in defensive 3rd'] = np.where(df['Def3rdTkl%_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in middle 3rd'] = np.where(df['Mid3rdTkl%_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in final 3rd'] = np.where(df['Att3rdTkl%_PR'] >= 75, 1, 0)
     df['Intercepts passes frequently'] = np.where(df['IntPer90_PR'] >= 75, 1, 0)
     df['Sweeps up loose balls frequently'] = np.where(df['LooseBallWinsPer90_PR'] >= 75, 1, 0)
     df['Blocks passes frequently'] = np.where(df['PassBlocksPer90_PR'] >= 75, 1, 0)
-    df['Takes few touches per action'] = np.where(df['ActionsPerTouch_PR'] >= 75, 1, 0)
-    df['Takes a lot of touches per action'] = np.where(df['ActionsPerTouch_PR'] <= 25, 1, 0)
+    df['Competes in a lot of aerial duels'] = np.where(df['AerialWinsPer90_PR'] >= 75, 1, 0)
+
+    df['Shoots frequently'] = np.where(df['ShotsPer90_PR'] >= 75, 1, 0)
+    df['Shoots from good areas'] = np.where(df['npxG/Sh_PR'] >= 75, 1, 0)
+    df['Shoots from poor areas'] = np.where(df['npxG/Sh_PR'] <= 25, 1, 0)
+    df['Creates a lot of his own shots'] = np.where(df['SCADribPer90_PR'] >= 75, 1, 0)
+
     #if df['Position Group'].any() != 'ST':
         #df['Plays a lot of line-breaking passes'] = np.where(
             #((df['ShortPass%_PR'] > 70) | (df['MediumPass%_PR'] > 70)) & 
@@ -356,8 +383,9 @@ def create_aggregated_columns(df):
     df['Tackling'] = np.where(df['DrbTkl%_PR'] >= 75, 1, 0)
     df['Passing Completion'] = np.where(df['TotCmp%_PR'] >= 75, 1, 0)
     df['Long Passing Completion'] = np.where(df['LongPassCmp%_PR'] >= 75, 1, 0)
-    df['Creating Chances'] = np.where(df['xAPer90_PR'] >= 75, 1, 0)
+    df['First Touch'] = np.where(df['Miscontrol%_PR'] >= 75, 1, 0) 
     df['Dribbling'] = np.where(df['DrbSucc%_PR'] >= 75, 1, 0)
+    df['Creating Chances'] = np.where(df['xAPer90_PR'] >= 75, 1, 0)
     df['Finishing'] = np.where(df['npG-xGPer90_PR'] >= 75, 1, 0)
     df['Shooting on Target'] = np.where(df['SoT%_PR'] >= 75, 1, 0)
 
@@ -366,8 +394,9 @@ def create_aggregated_columns(df):
     df['Tackling '] = np.where(df['DrbTkl%_PR'] <= 25, 1, 0)
     df['Passing Completion '] = np.where(df['TotCmp%_PR'] <= 25, 1, 0)
     df['Long Passing Completion '] = np.where(df['LongPassCmp%_PR'] <= 25, 1, 0)
-    df['Creating Chances '] = np.where(df['xAPer90_PR'] <= 25, 1, 0)
+    df['First Touch '] = np.where(df['Miscontrol%_PR'] <= 25, 1, 0) 
     df['Dribbling '] = np.where(df['DrbSucc%_PR'] <= 25, 1, 0)
+    df['Creating Chances '] = np.where(df['xAPer90_PR'] <= 25, 1, 0)
     df['Finishing '] = np.where(df['npG-xGPer90_PR'] <= 25, 1, 0)
     df['Shooting on Target '] = np.where(df['SoT%_PR'] <= 25, 1, 0)
 
@@ -749,6 +778,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR',
@@ -761,6 +791,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'DrbTkl%_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
@@ -824,6 +855,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'DrbTkl%_PR',
             'FlsPer90_PR',
             'PKconPer90_PR',
@@ -873,6 +905,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR'
@@ -884,6 +917,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'DrbTkl%_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
@@ -942,6 +976,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR',
@@ -954,6 +989,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'DrbTkl%_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
@@ -1017,6 +1053,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR',
@@ -1029,6 +1066,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
             'IntPer90_PR',
@@ -1092,6 +1130,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR',
@@ -1104,6 +1143,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
             'IntPer90_PR',
@@ -1166,6 +1206,7 @@ chart_metrics_by_position = {
             'TouchesPer90_PR',
             'TouchCentrality_PR',
             'ActionsPerTouch_PR',
+            'Miscontrol%_PR',
             'Def3rdTouch%_PR',
             'Mid3rdTouch%_PR',
             'Att3rdTouch%_PR',
@@ -1173,6 +1214,7 @@ chart_metrics_by_position = {
         ],
         'Defensive Play': [
             'TklPer90_PR',
+            'DuelTackleWinsPer90_PR',
             'FlsPer90_PR',
             'PassBlocksPer90_PR',
             'IntPer90_PR',
@@ -1288,76 +1330,112 @@ def create_player_bars(player_name, season_name, position_group, col, df, chart_
         st.pyplot(fig)
 
 def create_player_comparison(player1, player2, season_name_player1, season_name_player2, position_template, df):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import streamlit as st
+
+    # Extract data
     player1_data = df[(df['Player Name'] == player1) & (df['Season'] == season_name_player1)].iloc[0]
     player2_data = df[(df['Player Name'] == player2) & (df['Season'] == season_name_player2)].iloc[0]
 
-    # Get metrics for both players using position template
+    # Metrics and values
     metrics = metrics_by_position[position_template]
     values_1 = [round(player1_data[metric]) for metric in metrics]
     values_2 = [round(player2_data[metric]) for metric in metrics]
 
-    # Number of variables
     num_vars = len(metrics)
 
-    # Close the circle for both players
+    # Close the circle
     values_1 += values_1[:1]
     values_2 += values_2[:1]
 
-    # Create angles for each metric
+    # Angles for each axis
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-    angles += angles[:1]  # Close the circle for angles
+    angles += angles[:1]
 
-    # Create the radar chart
-    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(polar=True))
+    # Create radar chart
+    fig, ax = plt.subplots(figsize=(12, 12), subplot_kw=dict(polar=True))
 
-    # Plot both players
-    ax.fill(angles, values_1, color='blue', alpha=0.25, label=player1 + ' ' + season_name_player1)  # Fill for Player 1
-    ax.plot(angles, values_1, color='blue', linewidth=2)  # Player 1 in blue
+    # Plot players
+    ax.fill(angles, values_1, color='blue', alpha=0.25, label=f"{player1} {season_name_player1}")
+    ax.plot(angles, values_1, color='blue', linewidth=2)
 
-    ax.fill(angles, values_2, color='red', alpha=0.25, label=player2 + ' ' + season_name_player2)  # Fill for Player 2
-    ax.plot(angles, values_2, color='red', linewidth=2)  # Player 2 in red
+    ax.fill(angles, values_2, color='red', alpha=0.25, label=f"{player2} {season_name_player2}")
+    ax.plot(angles, values_2, color='red', linewidth=2)
 
-    # Set the labels for each angle
-    ax.set_xticks(angles[:-1])  # Set the labels for each angle
-    ax.set_xticklabels(metrics, fontsize=12, color='white')  # Set the metric names as labels and color them white
+    # Set angle labels
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(metrics, fontsize=13, color='white', fontweight='medium')
 
-    # Rotate the labels to avoid overlap
-    for label in ax.get_xticklabels():
-        label.set_rotation(0)  # Set rotation to 0 degrees
-        label.set_verticalalignment('bottom')  # Align labels to the bottom
+    # Adjust spacing from center
+    ax.tick_params(axis='x', pad=25)  # This handles top/bottom/sides neatly
 
-    # Remove radial ticks
-    ax.set_yticklabels([])  # This removes the radial ticks
+    # Improve readability by rotating side labels slightly
+    for i, label in enumerate(ax.get_xticklabels()):
+        angle = angles[i] * 180 / np.pi
+        if 80 < angle < 100 or 260 < angle < 280:
+            label.set_rotation(15 if angle < 180 else -15)
+            label.set_horizontalalignment('center')
 
-    # Customize chart
-    plt.title(f"{player1} ({season_name_player1}) vs {player2} ({season_name_player2}) Comparison | {position_template} Template:", pad=20, color='white')
+    # Clean up radial axis
+    ax.set_yticklabels([])
+    ax.set_ylim(0, 100)
 
-    # Set the background color to transparent
-    fig.patch.set_alpha(0)  # Set the figure background to transparent
-    ax.set_facecolor((1, 1, 1, 0))  # Set the axes background to transparent
+    # Outer ring styling
+    ax.spines['polar'].set_visible(True)
+    ax.spines['polar'].set_color('white')
 
-    # Add a legend
+    # Title and background
+    plt.title(f"{player1} ({season_name_player1}) vs {player2} ({season_name_player2}) | {position_template} Template", 
+              pad=20, color='white')
+
+    fig.patch.set_alpha(0)
+    ax.set_facecolor((1, 1, 1, 0))
+
+    # Legend
     ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1))
 
-    # Show the plot in Streamlit
+    # Display in Streamlit
     st.pyplot(fig)
+
 
 def create_player_traits(player_name, season_name, df):
     player_data = df[(df['Player Name'] == player_name) & (df['Season'] == season_name)]
 
     traits = [
-        'Attempts a lot of dribbles', 'Carries the ball frequently', 'Creates a lot of his own shots',
-        'Shoots frequently', 'Attempts a lot of through balls', 'Gets fouled frequently', 
-        'Switches the ball frequently', 'Makes a lot of tackles', 'Plays a lot of progressive passes',
-        'Plays a lot of short passes', 'Plays a lot of long passes', 'Has a high share of teams total touches',
-        'Has a high share of touches in defensive 3rd', 'Has a high share of touches in middle 3rd',
-        'Has a high share of touches in final 3rd', 'Has a high share of touches in the penalty box',
-        'Competes in a lot of aerial duels', 'Fouls frequently', 'Receives a lot of progressive passes',
-        'Has a high share of carries into dangerous areas', 'Crosses the ball frequently', 
-        'Shoots from poor areas', 'Shoots from good areas', 'Carries the ball over long distances',
-        'Has a high share of tackles in defensive 3rd', 'Has a high share of tackles in middle 3rd',
-        'Has a high share of tackles in final 3rd', 'Sweeps up loose balls frequently', 'Blocks passes frequently',
-        'Plays a lot of line-breaking passes', 'Takes few touches per action', 'Takes a lot of touches per action'
+        'Has a high share of teams total touches',
+        'Has a high share of touches in defensive 3rd',
+        'Has a high share of touches in middle 3rd',
+        'Has a high share of touches in final 3rd',
+        'Has a high share of touches in the penalty box',
+        'Takes a lot of touches per action',
+        'Takes few touches per action',
+        'Receives a lot of progressive passes',
+        'Plays a lot of progressive passes',
+        'Plays a lot of short passes',
+        'Plays a lot of long passes',
+        'Plays a lot of line-breaking passes',
+        'Attempts a lot of through balls',
+        'Switches the ball frequently',
+        'Crosses the ball frequently',
+        'Carries the ball frequently',
+        'Carries the ball over long distances',
+        'Has a high share of carries into dangerous areas',
+        'Attempts a lot of dribbles',
+        'Gets fouled frequently',
+        'Fouls frequently',
+        'Makes a lot of tackles',
+        'Has a high share of tackles in defensive 3rd',
+        'Has a high share of tackles in middle 3rd',
+        'Has a high share of tackles in final 3rd',
+        'Intercepts passes frequently',
+        'Sweeps up loose balls frequently',
+        'Blocks passes frequently',
+        'Competes in a lot of aerial duels',
+        'Shoots frequently',
+        'Shoots from good areas',
+        'Shoots from poor areas',
+        'Creates a lot of his own shots'
     ]
 
     for trait in traits:
@@ -1371,11 +1449,11 @@ def create_player_strengths_weaknesses(player_name, season_name, df):
     player_data = df[(df['Player Name'] == player_name) & (df['Season'] == season_name)].iloc[0]
 
     strengths = [
-        'Aerial Duels', 'Tackling', 'Passing Completion', 'Long Passing Completion', 'Creating Chances', 'Dribbling', 'Finishing', 'Shooting on Target'
+        'Aerial Duels', 'Tackling', 'Passing Completion', 'Long Passing Completion', 'First Touch', 'Dribbling', 'Creating Chances', 'Finishing', 'Shooting on Target'
     ]
 
     weaknesses = [
-        'Aerial Duels ', 'Tackling ', 'Passing Completion ', 'Long Passing Completion ', 'Creating Chances ', 'Dribbling ', 'Finishing ', 'Shooting on Target '
+        'Aerial Duels ', 'Tackling ', 'Passing Completion ', 'Long Passing Completion ', 'First Touch ', 'Dribbling ', 'Creating Chances ', 'Finishing ', 'Shooting on Target '
     ]
 
     for strength in strengths:
@@ -1577,6 +1655,8 @@ st.write("All metrics are percentile ranked within the selected players position
 function_filter = st.radio("Select a function to display:", 
                         ("Pizza Chart", "Full Dashboard", "Comparison Dashboard", "Filtering Dashboard"))
 
+st.write("---------------")
+
 if function_filter != "Comparison Dashboard" and function_filter != "Filtering Dashboard":
     unique_players = df_combined['Player Name'].sort_values().unique()
     player_filter = st.selectbox('Select a player:', unique_players, index=0)
@@ -1762,30 +1842,51 @@ elif function_filter == "Filtering Dashboard":
         minutes_filter = st.slider('Select a range of minutes:', 0, 4500, (0, 4500))
 
     traits = [
-        'Attempts a lot of dribbles', 'Carries the ball frequently', 'Creates a lot of his own shots',
-        'Shoots frequently', 'Attempts a lot of through balls', 'Gets fouled frequently', 
-        'Switches the ball frequently', 'Makes a lot of tackles', 'Plays a lot of progressive passes',
-        'Plays a lot of short passes', 'Plays a lot of long passes', 'Has a high share of teams total touches',
-        'Has a high share of touches in defensive 3rd', 'Has a high share of touches in middle 3rd',
-        'Has a high share of touches in final 3rd', 'Has a high share of touches in the penalty box',
-        'Competes in a lot of aerial duels', 'Fouls frequently', 'Receives a lot of progressive passes',
-        'Has a high share of carries into dangerous areas', 'Crosses the ball frequently', 
-        'Shoots from poor areas', 'Shoots from good areas', 'Carries the ball over long distances',
-        'Has a high share of tackles in defensive 3rd', 'Has a high share of tackles in middle 3rd',
-        'Has a high share of tackles in final 3rd', 'Sweeps up loose balls frequently', 'Blocks passes frequently',
-        'Plays a lot of line-breaking passes', 'Takes few touches per action', 'Takes a lot of touches per action'
+        'Has a high share of teams total touches',
+        'Has a high share of touches in defensive 3rd',
+        'Has a high share of touches in middle 3rd',
+        'Has a high share of touches in final 3rd',
+        'Has a high share of touches in the penalty box',
+        'Takes a lot of touches per action',
+        'Takes few touches per action',
+        'Receives a lot of progressive passes',
+        'Plays a lot of progressive passes',
+        'Plays a lot of short passes',
+        'Plays a lot of long passes',
+        'Plays a lot of line-breaking passes',
+        'Attempts a lot of through balls',
+        'Switches the ball frequently',
+        'Crosses the ball frequently',
+        'Carries the ball frequently',
+        'Carries the ball over long distances',
+        'Has a high share of carries into dangerous areas',
+        'Attempts a lot of dribbles',
+        'Gets fouled frequently',
+        'Fouls frequently',
+        'Makes a lot of tackles',
+        'Has a high share of tackles in defensive 3rd',
+        'Has a high share of tackles in middle 3rd',
+        'Has a high share of tackles in final 3rd',
+        'Intercepts passes frequently',
+        'Sweeps up loose balls frequently',
+        'Blocks passes frequently',
+        'Competes in a lot of aerial duels',
+        'Shoots frequently',
+        'Shoots from good areas',
+        'Shoots from poor areas',
+        'Creates a lot of his own shots'
     ]
 
     trait_filter = st.multiselect('Select traits that you want your player to have:', traits)
 
     strengths = [
-        'Aerial Duels', 'Tackling', 'Passing Completion', 'Long Passing Completion', 'Creating Chances', 'Dribbling', 'Finishing', 'Shooting on Target'
+        'Aerial Duels', 'Tackling', 'Passing Completion', 'Long Passing Completion', 'First Touch', 'Dribbling', 'Creating Chances', 'Finishing', 'Shooting on Target'
     ]
 
     strength_filter = st.multiselect('Select strengths that you want your player to have:', strengths)
 
     weaknesses = [
-        'Aerial Duels ', 'Tackling ', 'Passing Completion ', 'Long Passing Completion ', 'Creating Chances ', 'Dribbling ', 'Finishing ', 'Shooting on Target '
+        'Aerial Duels ', 'Tackling ', 'Passing Completion ', 'Long Passing Completion ', 'First Touch ', 'Dribbling ', 'Creating Chances ', 'Finishing ', 'Shooting on Target '
     ]
 
     weakness_filter = st.multiselect('Select weaknesses that you do not want your player to have:', weaknesses)
