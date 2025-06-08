@@ -133,6 +133,13 @@ df['Player Name'] = df['Player'] + ' (' + df['Squad'] + ')'
 
 df['Extract'] = df['Extract'].fillna('Next 12 Leagues')
 
+
+df['Off'] = np.where(df['Off'] == 0, 0.1, df['Off'])
+df['Tkl'] = np.where(df['Tkl'] == 0, 0.1, df['Tkl'])
+df['Def3rdTkl'] = np.where(df['Def3rdTkl'] == 0, 0.1, df['Def3rdTkl'])
+df['Mid3rdTkl'] = np.where(df['Mid3rdTkl'] == 0, 0.1, df['Mid3rdTkl'])
+df['Att3rdTkl'] = np.where(df['Att3rdTkl'] == 0, 0.1, df['Att3rdTkl'])
+
 df['OffPer90'] = df['Off']/(df['Min'] / 90)
 df['PKwonPer90'] = df['PKwon']/(df['Min'] / 90)
 df['PKconPer90'] = df['PKcon']/(df['Min'] / 90)
@@ -199,6 +206,8 @@ def create_percentile_rankings(position, additional_player, df):
 
     df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
     df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
+    df['OffsPer90_PR'] = df['OffPer90_PR'] ### this is for usage in aggregated metrics
+    df['OffsidesPer90_PR'] = (100 - df['OffPer90_PR'])
 
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player Name', 'Squad', 'Season', 'Main Position'], keep='first')
@@ -253,6 +262,8 @@ def create_percentile_rankings_comparison(position, additional_player, additiona
 
     df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
     df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
+    df['OffsidesPer90_PR'] = df['OffPer90_PR']
+    df['OffsPer90_PR'] = (100- df['OffsidesPer90_PR']) ### this is for usage in aggregated metrics
 
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player Name', 'Squad', 'Season', 'Main Position'], keep='first')
@@ -305,6 +316,8 @@ def create_percentile_rankings_filtered(fbref_position, position_template, df):
 
     df['AvgShotDistancePer90_PR'] = (100 - df['AvgShotDistancePer90_PR'])
     df['Miscontrol%_PR'] = (100 - df['Miscontrol%_PR'])
+    df['OffsidesPer90_PR'] = df['OffPer90_PR']
+    df['OffsPer90_PR'] = (100- df['OffsidesPer90_PR']) ### this is for usage in aggregated metrics
 
     # Drop all duplicates
     df = df.sort_values('Min', ascending=False).drop_duplicates(subset=['Player', 'Squad', 'Season', 'Position Group'], keep='first')
@@ -357,7 +370,8 @@ def create_aggregated_columns(df):
     df['Gets fouled frequently'] = np.where(df['FldPer90_PR'] >= 75, 1, 0)
 
     df['Fouls frequently'] = np.where(df['FlsPer90_PR'] >= 75, 1, 0)
-    df['Makes a lot of tackles'] = np.where(df['TklPer90_PR'] >= 75, 1, 0)
+    df['Makes a lot of tackles in 1v1 situations'] = np.where(df['TklPer90_PR'] >= 75, 1, 0)
+    df['Makes a lot of tackles in duel situations'] = np.where(df['DuelTackleWinsPer90_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in defensive 3rd'] = np.where(df['Def3rdTkl%_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in middle 3rd'] = np.where(df['Mid3rdTkl%_PR'] >= 75, 1, 0)
     df['Has a high share of tackles in final 3rd'] = np.where(df['Att3rdTkl%_PR'] >= 75, 1, 0)
@@ -370,6 +384,8 @@ def create_aggregated_columns(df):
     df['Shoots from good areas'] = np.where(df['npxG/Sh_PR'] >= 75, 1, 0)
     df['Shoots from poor areas'] = np.where(df['npxG/Sh_PR'] <= 25, 1, 0)
     df['Creates a lot of his own shots'] = np.where(df['SCADribPer90_PR'] >= 75, 1, 0)
+
+    df['Runs in behind frequently'] = np.where(df['OffsPer90_PR'] >= 75, 1, 0)
 
     #if df['Position Group'].any() != 'ST':
         #df['Plays a lot of line-breaking passes'] = np.where(
@@ -423,13 +439,13 @@ def create_aggregated_columns(df):
     df['Playmaking CM'] = ((df['ThroughPass%_PR']*0.20)+(df['KeyPass%_PR']*0.15)+(df['ProgPassesRecPer90_PR']*0.15)+(df['xAPer90_PR']*0.20)+(df['PenAreaCmpPer90_PR']*0.10)+(df['ShotsPer90_PR']*0.10)+(df['SCAPer90_PR']*0.10))
     df['Box Crasher'] = ((df['AerialWinsPer90_PR']*0.125)+(df['AerialWin%_PR']*0.125)+(df['ShotsPer90_PR']*0.25)+(df['npxGPer90_PR']*0.20)+(df['npxG/Sh_PR']*0.15)+(df['AttPenTouch%_PR']*0.15))
     df['Playmaking 10'] = ((df['ThroughPass%_PR']*0.15)+(df['KeyPass%_PR']*0.15)+(df['ProgPassesRecPer90_PR']*0.10)+(df['AttDrbPer90_PR']*0.10)+(df['ProgCarryEfficiency_PR']*0.10)+(df['xAPer90_PR']*0.15)+(df['PenAreaCmpPer90_PR']*0.10)+(df['ShotsPer90_PR']*0.10)+(df['SCAPer90_PR']*0.05))
-    df['Second Striker'] = ((df['ShotsPer90_PR']*0.20)+(df['npxGPer90_PR']*0.20)+(df['npxG/Sh_PR']*0.15)+(df['AttPenTouch%_PR']*0.10)+(df['SCADribPer90_PR']*0.10)+(df['ProgDistancePerCarry_PR']*0.10)+(df['ProgPassesRecPer90_PR']*0.10)+(df['LooseBallWinsPer90_PR']*0.05))
+    df['Second Striker'] = ((df['ShotsPer90_PR']*0.175)+(df['npxGPer90_PR']*0.20)+(df['npxG/Sh_PR']*0.15)+(df['AttPenTouch%_PR']*0.10)+(df['SCADribPer90_PR']*0.075)+(df['ProgDistancePerCarry_PR']*0.10)+(df['ProgPassesRecPer90_PR']*0.075)+(df['LooseBallWinsPer90_PR']*0.05)+(df['OffsPer90_PR']*0.075))
     df['Ball Carrying AM'] = ((df['AttDrbPer90_PR']*0.225)+(df['DrbSucc%_PR']*0.225)+(df['ProgCarriesPer90_PR']*0.15)+(df['FldPer90_PR']*0.075)+(df['ProgPassesRecPer90_PR']*0.125)+(df['SCADribPer90_PR']*0.20))
     df['Touchline Winger'] = ((df['ProgCarryEfficiency_PR']*0.15)+(df['ProgPassesRecPer90_PR']*0.10)+(df['AttDrbPer90_PR']*0.20)+(df['xAPer90_PR']*0.15)+(df['PenAreaCmpPer90_PR']*0.15)+(df['CrsPer90_PR']*0.15)+(df['Att3rdTouch%_PR']*0.10))
-    df['Inside Forward'] = ((df['ProgPassesRecPer90_PR']*0.125)+(df['ShotsPer90_PR']*0.175)+(df['AttPenTouch%_PR']*0.125)+(df['ProgCarryEfficiency_PR']*0.10)+(df['ProgDistancePerCarry_PR']*0.10)+(df['npxGPer90_PR']*0.175)+(df['SCADribPer90_PR']*0.15)+(df['AttDrbPer90_PR']*0.05))
+    df['Inside Forward'] = ((df['ProgPassesRecPer90_PR']*0.125)+(df['ShotsPer90_PR']*0.15)+(df['AttPenTouch%_PR']*0.125)+(df['ProgCarryEfficiency_PR']*0.10)+(df['ProgDistancePerCarry_PR']*0.10)+(df['npxGPer90_PR']*0.15)+(df['SCADribPer90_PR']*0.125)+(df['AttDrbPer90_PR']*0.05)+(df['OffsPer90_PR']*0.075))
     df['Playmaking Winger'] = ((df['ThroughPass%_PR']*0.15)+(df['KeyPass%_PR']*0.15)+(df['ProgPassesRecPer90_PR']*0.10)+(df['AttDrbPer90_PR']*0.10)+(df['ProgCarryEfficiency_PR']*0.10)+(df['xAPer90_PR']*0.15)+(df['PenAreaCmpPer90_PR']*0.10)+(df['ShotsPer90_PR']*0.10)+(df['SCAPer90_PR']*0.05))
-    df['Outlet Winger'] = ((df['AerialWinsPer90_PR']*0.15)+(df['AerialWin%_PR']*0.15)+(df['AttDrbPer90_PR']*0.20)+(df['ProgDistancePerCarry_PR']*0.15)+(df['ProgCarryEfficiency_PR']*0.15)+(df['ShotsPer90_PR']*0.10)+(df['ProgPassesRecPer90_PR']*0.05)+(df['Def3rdTkl%_PR']*0.05))
-    df['Outlet'] = ((df['ProgDistancePerCarry_PR']*0.125)+(df['ProgCarryEfficiency_PR']*0.10)+(df['AttDrbPer90_PR']*0.125)+(df['DrbSucc%_PR']*0.10)+(df['AerialWinsPer90_PR']*0.125)+(df['AerialWin%_PR']*0.1375)+(df['ShotsPer90_PR']*0.10)+(df['SCADribPer90_PR']*0.1375)+(df['FldPer90_PR']*0.05))
+    df['Outlet Winger'] = ((df['AerialWinsPer90_PR']*0.15)+(df['AerialWin%_PR']*0.15)+(df['AttDrbPer90_PR']*0.15)+(df['ProgDistancePerCarry_PR']*0.15)+(df['ProgCarryEfficiency_PR']*0.125)+(df['ShotsPer90_PR']*0.10)+(df['ProgPassesRecPer90_PR']*0.05)+(df['Def3rdTkl%_PR']*0.05)+(df['OffsPer90_PR']*0.075))
+    df['Outlet'] = ((df['ProgDistancePerCarry_PR']*0.125)+(df['ProgCarryEfficiency_PR']*0.10)+(df['AttDrbPer90_PR']*0.10)+(df['DrbSucc%_PR']*0.075)+(df['AerialWinsPer90_PR']*0.10)+(df['AerialWin%_PR']*0.125)+(df['ShotsPer90_PR']*0.10)+(df['SCADribPer90_PR']*0.125)+(df['FldPer90_PR']*0.05)+(df['OffsPer90_PR']*0.075))
     df['Target Man'] = ((df['AerialWin%_PR']*0.15)+(df['AerialWinsPer90_PR']*0.175)+(df['KeyPass%_PR']*0.10)+(df['ShortPass%_PR']*0.05)+(df['npxGPer90_PR']*0.20)+(df['npxG/Sh_PR']*0.20)+(df['AttPenTouch%_PR']*0.125))
     df['Poacher'] = ((df['npxGPer90_PR']*0.25)+(df['npxG/Sh_PR']*0.25)+(df['AttPenTouch%_PR']*0.25)+(df['ShotsPer90_PR']*0.25))
     df['False 9'] = ((df['TouchCentrality_PR']*0.10)+(df['Mid3rdTouch%_PR']*0.05)+(df['AttDrbPer90_PR']*0.15)+(df['DrbSucc%_PR']*0.15)+(df['ProgCarryEfficiency_PR']*0.10)+(df['ThroughPass%_PR']*0.10)+(df['xAPer90_PR']*0.10)+(df['ShotsPer90_PR']*0.15)+(df['SCADribPer90_PR']*0.10))  
@@ -1111,7 +1127,8 @@ chart_metrics_by_position = {
             'npxGPer90_PR',
             'npxG/Sh_PR',
             'SCAPer90_PR',
-            'SCADribPer90_PR'
+            'SCADribPer90_PR',
+            'OffsidesPer90_PR'
         ]
     },
     'W': {
@@ -1188,7 +1205,8 @@ chart_metrics_by_position = {
             'npxGPer90_PR',
             'npxG/Sh_PR',
             'SCAPer90_PR',
-            'SCADribPer90_PR'
+            'SCADribPer90_PR',
+            'OffsidesPer90_PR'
         ]
     },
     'ST': {
@@ -1259,7 +1277,8 @@ chart_metrics_by_position = {
             'npxG/Sh_PR',
             'AvgShotDistancePer90_PR',
             'SCAPer90_PR',
-            'SCADribPer90_PR'
+            'SCADribPer90_PR',
+            'OffsidesPer90_PR'
         ]
     }
 }
@@ -1424,7 +1443,8 @@ def create_player_traits(player_name, season_name, df):
         'Attempts a lot of dribbles',
         'Gets fouled frequently',
         'Fouls frequently',
-        'Makes a lot of tackles',
+        'Makes a lot of tackles in 1v1 situations',
+        'Makes a lot of tackles in duel situations',
         'Has a high share of tackles in defensive 3rd',
         'Has a high share of tackles in middle 3rd',
         'Has a high share of tackles in final 3rd',
@@ -1435,7 +1455,8 @@ def create_player_traits(player_name, season_name, df):
         'Shoots frequently',
         'Shoots from good areas',
         'Shoots from poor areas',
-        'Creates a lot of his own shots'
+        'Creates a lot of his own shots',
+        'Runs in behind frequently'
     ]
 
     for trait in traits:
@@ -1863,7 +1884,8 @@ elif function_filter == "Filtering Dashboard":
         'Attempts a lot of dribbles',
         'Gets fouled frequently',
         'Fouls frequently',
-        'Makes a lot of tackles',
+        'Makes a lot of tackles in 1v1 situations',
+        'Makes a lot of tackles in duel situations',
         'Has a high share of tackles in defensive 3rd',
         'Has a high share of tackles in middle 3rd',
         'Has a high share of tackles in final 3rd',
@@ -1874,7 +1896,8 @@ elif function_filter == "Filtering Dashboard":
         'Shoots frequently',
         'Shoots from good areas',
         'Shoots from poor areas',
-        'Creates a lot of his own shots'
+        'Creates a lot of his own shots',
+        'Runs in behind frequently'
     ]
 
     trait_filter = st.multiselect('Select traits that you want your player to have:', traits)
