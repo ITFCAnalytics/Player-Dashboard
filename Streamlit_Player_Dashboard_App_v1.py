@@ -342,7 +342,7 @@ def create_aggregated_columns(df):
     df['Shot Quality'] = (df['npxG/Sh_PR'])
     df['Self-created Shots'] = (df['SCADribPer90_PR'])
     df['Switching Play'] = (df['SwitchesPer90_PR'])
-    df['Defensive Intensity'] = (df['Tkl+IntPer90_PR']+df['Tkl+IntPer600OppTouch_PR']+df['TklWinPossPer90_PR']+df['FlsPer90_PR']+df['PassBlocksPer90_PR']+df['LooseBallWinsPer90_PR'])/6
+    df['Defensive Intensity'] = (df['TklPer90_PR']+df['FlsPer90_PR']+df['PassBlocksPer90_PR']+df['LooseBallWinsPer90_PR']+df['DuelTackleWinsPer90_PR'])/5
 
     # Traits
     df['Has a high share of teams total touches'] = np.where(df['TouchCentrality_PR'] >= 75, 1, 0)
