@@ -155,7 +155,7 @@ df['LineBreakingPass%'] = (df['LineBreakingPassesPer90'] / df['PassesAttemptedPe
 df['LooseBallWinsPer90'] = (df['RecovPer90'] - (df['TklWinPossPer90'] + df['IntPer90'] + (df['PassBlocksPer90'] * 0.5)))
 df['LooseBallWinsPer90'] = np.where(df['LooseBallWinsPer90'] == 0, 0.1, df['LooseBallWinsPer90'])
 
-df['DuelTackleWinsPer90'] = df['TklWinPoss'] - df['DrbTkl']
+df['DuelTackleWinsPer90'] = df['TklWinPossPer90'] - df['DrbTklPer90']
 df['DuelTackleWinsPer90'] = np.where(df['DuelTackleWinsPer90'] == 0, 0.1, df['DuelTackleWinsPer90'])
 
 df['Miscontrols'] = df['CarryMistakes']
