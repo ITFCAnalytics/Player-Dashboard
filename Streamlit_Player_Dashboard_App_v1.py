@@ -30,7 +30,7 @@ import matplotlib
 root = os.getcwd() + '/'
 
 
-url = "https://github.com/ITFCAnalytics/Player-Dashboard/raw/297bcfc7edb62c9e8b583ffbf283edb01e252d30/Final_FBRef_All_Leagues.parquet"
+url = "https://github.com/ITFCAnalytics/Player-Dashboard/raw/e12438ea01cbda6a456c90f591bc417f8b1e891c/Final_FBRef_All_Leagues.parquet"
 #url = 'https://drive.google.com/uc?export=download&id=1AZhc9HS0IBH0FMC7NArwRP3eu6n14Bv2'
 #url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leagues.csv?rlkey=jhci52hjq0lw8xjnyhydng3uj&raw=1'
 
@@ -1848,7 +1848,7 @@ elif function_filter == "Filtering Dashboard":
         if 'All' in league_filter:
             league_filter = list(unique_leagues)
 
-        unique_seasons = ['2022-2023', '2023-2024', '2024-2025']
+        unique_seasons = ['2022-2023', '2023-2024', '2024-2025', '2025-2026']
         season_filter = st.multiselect('Select a season:', ['All'] + list(unique_seasons), default='All')
         if 'All' in season_filter:
             season_filter = list(unique_seasons)
