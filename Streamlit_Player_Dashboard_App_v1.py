@@ -30,7 +30,7 @@ import matplotlib
 root = os.getcwd() + '/'
 
 
-url = "https://github.com/ITFCAnalytics/Player-Dashboard/raw/914a0a70ce3d7f364020fa9fcbd7b34c8d57fa6b/Final_FBRef_All_Leagues.parquet"
+url = "https://github.com/ITFCAnalytics/Player-Dashboard/raw/98ba24dc7eb288315d3f19191e0f9c59768445ec/Final_FBRef_All_Leagues.parquet"
 #url = 'https://drive.google.com/uc?export=download&id=1AZhc9HS0IBH0FMC7NArwRP3eu6n14Bv2'
 #url = 'https://www.dropbox.com/scl/fi/nsqh1o4lywfs5it9buu88/Final-FBRef-All-Leagues.csv?rlkey=jhci52hjq0lw8xjnyhydng3uj&raw=1'
 
